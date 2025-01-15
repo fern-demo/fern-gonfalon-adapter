@@ -4,17 +4,16 @@ import { GonfalonContext } from './types';
 
 type UseGonfalonContextOptions = {
 	application: ApplicationType;
-	anonymous: boolean;
 	enabled: boolean;
 	env: Env;
 	cookie: string | null;
 };
 
-export const useGonfalonContext = async ({ application, anonymous, enabled, env, cookie }: UseGonfalonContextOptions) => {
+export const useGonfalonContext = async ({ application, enabled, env, cookie }: UseGonfalonContextOptions) => {
 	let context: GonfalonContext | null = null;
 
 	const fetchConfig = async () => {
-		const response = await getGonfalonContext({ application, anonymous, env, cookie });
+		const response = await getGonfalonContext({ application, env, cookie });
 		if (response) {
 			context = response;
 		}

@@ -4,7 +4,6 @@ import { getBaseUrl } from './utils';
 
 type GetGonfalonContextOptions = {
 	application: ApplicationType;
-	anonymous: boolean;
 	env: Env;
 	cookie: string | null;
 };
@@ -19,17 +18,19 @@ const getUrl = (anonymous: boolean, application: ApplicationType, env: Env) => {
 	return new URL(`${base}/internal/docs/context/authenticated`);
 };
 
-export const getGonfalonContext = async ({ anonymous, application, env, cookie }: GetGonfalonContextOptions): Promise<GonfalonContext> => {
-	const url = getUrl(anonymous, application, env);
+export const getGonfalonContext = async ({ application, env, cookie }: GetGonfalonContextOptions): Promise<GonfalonContext> => {
+	const authUrl = getUrl(false, application, env);
+	const anonUrl = getUrl(true, application, env);
 
 	try {
 		const headers = new Headers();
-		if (!anonymous && cookie) {
+		if (cookie) {
 			headers.set('Cookie', cookie);
 		}
-		const res = await fetch(url, {
-			headers,
-		});
+		let res = await fetch(cookie ? authUrl : anonUrl, { headers });
+		if (!res.ok) {
+			res = await fetch(anonUrl, { headers });
+		}
 		const json = await res.json();
 		return json as GonfalonContext;
 	} catch (err) {

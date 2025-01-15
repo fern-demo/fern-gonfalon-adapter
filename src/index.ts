@@ -18,13 +18,11 @@ export default {
 
 		const { searchParams } = new URL(request.url);
 		const application = versionToApplication(searchParams.get('version'));
-		const anonymous = searchParams.get('anonymous') !== 'false';
 
 		const enableGonfalonLogin = env.ENABLE_GONFALON_LOGIN === 'true';
 
 		const { context: gonfalonContext } = await useGonfalonContext({
 			application,
-			anonymous,
 			enabled: enableGonfalonLogin,
 			env,
 			cookie: request.headers.get('Cookie'),
