@@ -10,7 +10,7 @@ export default {
 	async fetch(request, env, _ctx): Promise<Response> {
 		const { searchParams } = new URL(request.url);
 		const application = versionToApplication(searchParams.get('version'));
-		const anonymous = searchParams.get('anonymous') === 'true';
+		const anonymous = searchParams.get('anonymous') !== 'false';
 
 		const enableGonfalonLogin = env.ENABLE_GONFALON_LOGIN === 'true';
 
