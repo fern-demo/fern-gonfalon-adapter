@@ -2,12 +2,22 @@ import { LoginStatusTypes } from './loginStatusTypes';
 import { ApplicationType } from './applicationType';
 import { LoginStatusType } from './loginStatusTypes';
 import { useGonfalonContext } from './useGonfalonContext';
-import { appendPropertiesToUserContext, getBaseUrl } from './utils';
+import { appendPropertiesToUserContext, getBaseUrl, isCommercialLoggedInUser, isEU, isFederal } from './utils';
 import { useInitGonfalonSecureMode } from './useInitGonfalonSecureMode';
 import { fetchAccount } from './loginUtils';
 
 export default {
 	async fetch(request, env, _ctx): Promise<Response> {
+		if (request.method === 'OPTIONS') {
+			return new Response(null, {
+				headers: accessControlHeaders(),
+			});
+		}
+
+		if (request.method !== 'GET') {
+			return new Response('Method not allowed', { status: 405 });
+		}
+
 		const { searchParams } = new URL(request.url);
 		const application = versionToApplication(searchParams.get('version'));
 		const anonymous = searchParams.get('anonymous') !== 'false';
@@ -54,8 +64,10 @@ export default {
 
 		const responseHeaders = new Headers();
 		if (config?.secureModeHash) {
-			responseHeaders.set('X-Secure-Mode-Hash', config.secureModeHash);
+			responseHeaders.set('X-Hash', config.secureModeHash);
 		}
+
+		accessControlHeaders(responseHeaders);
 
 		return new Response(JSON.stringify(context), {
 			headers: responseHeaders,
@@ -75,20 +87,10 @@ function versionToApplication(version: string | null): ApplicationType {
 	return 'launchDarkly';
 }
 
-const isFederal = (site?: ApplicationType) => {
-	return site === 'federal';
-};
-
-const isEU = (site?: ApplicationType) => {
-	return site === 'eu';
-};
-
-const isCommercialLoggedInUser = (site: ApplicationType, loginStatus?: LoginStatusType) => {
-	return loginStatus?.accountId && !isFederal(site);
-};
-
-const isAnonymous = (site: ApplicationType, loginStatus?: LoginStatusType) => {
-	return !isCommercialLoggedInUser(site, loginStatus) && !isFederal(site) && !isLoggedIn(loginStatus);
-};
-
-const isLoggedIn = (loginStatus?: LoginStatusType) => loginStatus?.status === LoginStatusTypes.LOGGED_IN;
+function accessControlHeaders(responseHeaders: Headers = new Headers()): Headers {
+	responseHeaders.set('Access-Control-Allow-Origin', '*');
+	responseHeaders.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+	responseHeaders.set('Access-Control-Allow-Headers', 'Authorization, Cookie');
+	responseHeaders.set('Access-Control-Expose-Headers', 'X-Hash');
+	return responseHeaders;
+}

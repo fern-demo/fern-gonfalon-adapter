@@ -1,4 +1,6 @@
 import { ApplicationType } from './applicationType';
+import { LoginStatusTypes } from './loginStatusTypes';
+import { LoginStatusType } from './loginStatusTypes';
 import { GonfalonAnonymousMultiContext, GonfalonContext } from './types';
 
 export const getBaseUrl = (application: ApplicationType, env: Env) => {
@@ -46,3 +48,21 @@ export const appendPropertiesToUserContext = (context: GonfalonContext | null, p
 
 	return context;
 };
+
+export const isFederal = (site?: ApplicationType) => {
+	return site === 'federal';
+};
+
+export const isEU = (site?: ApplicationType) => {
+	return site === 'eu';
+};
+
+export const isCommercialLoggedInUser = (site: ApplicationType, loginStatus?: LoginStatusType) => {
+	return loginStatus?.accountId && !isFederal(site);
+};
+
+export const isAnonymous = (site: ApplicationType, loginStatus?: LoginStatusType) => {
+	return !isCommercialLoggedInUser(site, loginStatus) && !isFederal(site) && !isLoggedIn(loginStatus);
+};
+
+export const isLoggedIn = (loginStatus?: LoginStatusType) => loginStatus?.status === LoginStatusTypes.LOGGED_IN;
