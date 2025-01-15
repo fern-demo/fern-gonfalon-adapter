@@ -8,7 +8,7 @@ export default {
 	async fetch(request, env, _ctx): Promise<Response> {
 		if (request.method === 'OPTIONS') {
 			return new Response(null, {
-				headers: accessControlHeaders(),
+				headers: accessControlHeaders(new Headers(), request.headers.get('Origin')),
 			});
 		}
 
@@ -64,7 +64,7 @@ export default {
 			responseHeaders.set('X-Hash', config.secureModeHash);
 		}
 
-		accessControlHeaders(responseHeaders);
+		accessControlHeaders(responseHeaders, request.headers.get('Origin'));
 
 		return new Response(JSON.stringify(context), {
 			headers: responseHeaders,
@@ -84,13 +84,8 @@ function versionToApplication(version: string | null): ApplicationType {
 	return 'launchDarkly';
 }
 
-function accessControlHeaders(responseHeaders: Headers = new Headers()): Headers {
-	responseHeaders.set(
-		'Access-Control-Allow-Origin',
-		['http://localhost:3000', 'https://launchdarkly.docs.buildwithfern.com', 'https://launchdarkly.docs.staging.buildwithfern.com'].join(
-			', '
-		)
-	);
+function accessControlHeaders(responseHeaders: Headers = new Headers(), origin: string | null): Headers {
+	responseHeaders.set('Access-Control-Allow-Origin', origin ?? '*');
 	responseHeaders.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
 	responseHeaders.set('Access-Control-Allow-Headers', 'Authorization, Cookie');
 	responseHeaders.set('Access-Control-Expose-Headers', 'X-Hash');
