@@ -73,11 +73,11 @@ export default {
 } satisfies ExportedHandler<Env>;
 
 function versionToApplication(version: string | null): ApplicationType {
-	if (version === 'fed-docs') {
+	if (version === 'Federal docs') {
 		return 'federal';
 	}
 
-	if (version === 'eu-docs') {
+	if (version === 'EU docs') {
 		return 'eu';
 	}
 
@@ -85,7 +85,12 @@ function versionToApplication(version: string | null): ApplicationType {
 }
 
 function accessControlHeaders(responseHeaders: Headers = new Headers()): Headers {
-	responseHeaders.set('Access-Control-Allow-Origin', '*');
+	responseHeaders.set(
+		'Access-Control-Allow-Origin',
+		['http://localhost:3000', 'https://launchdarkly.docs.buildwithfern.com', 'https://launchdarkly.docs.staging.buildwithfern.com'].join(
+			', '
+		)
+	);
 	responseHeaders.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
 	responseHeaders.set('Access-Control-Allow-Headers', 'Authorization, Cookie');
 	responseHeaders.set('Access-Control-Expose-Headers', 'X-Hash');
