@@ -1,8 +1,6 @@
-import { LoginStatusTypes } from './loginStatusTypes';
 import { ApplicationType } from './applicationType';
-import { LoginStatusType } from './loginStatusTypes';
 import { useGonfalonContext } from './useGonfalonContext';
-import { appendPropertiesToUserContext, getBaseUrl, isCommercialLoggedInUser, isEU, isFederal } from './utils';
+import { appendPropertiesToUserContext, isCommercialLoggedInUser, isEU, isFederal } from './utils';
 import { useInitGonfalonSecureMode } from './useInitGonfalonSecureMode';
 import { fetchAccount } from './loginUtils';
 
