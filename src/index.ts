@@ -89,5 +89,6 @@ function accessControlHeaders(responseHeaders: Headers = new Headers(), origin: 
 	responseHeaders.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
 	responseHeaders.set('Access-Control-Allow-Headers', 'Authorization, Cookie');
 	responseHeaders.set('Access-Control-Expose-Headers', 'X-Hash');
+	responseHeaders.set('Access-Control-Allow-Credentials', 'true');
 	return responseHeaders;
 }
