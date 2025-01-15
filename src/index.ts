@@ -61,6 +61,7 @@ export default {
 		});
 
 		const responseHeaders = new Headers();
+		responseHeaders.set('Content-Type', 'application/json');
 		if (config?.secureModeHash) {
 			responseHeaders.set('X-Hash', config.secureModeHash);
 		}
