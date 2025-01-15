@@ -57,7 +57,7 @@ export default {
 			responseHeaders.set('X-Secure-Mode-Hash', config.secureModeHash);
 		}
 
-		return new Response(JSON.stringify(properties), {
+		return new Response(JSON.stringify(context), {
 			headers: responseHeaders,
 		});
 	},
