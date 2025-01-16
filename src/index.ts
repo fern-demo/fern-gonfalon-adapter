@@ -61,7 +61,7 @@ export default {
 		const responseHeaders = new Headers();
 		responseHeaders.set('Content-Type', 'application/json');
 		if (config?.secureModeHash) {
-			responseHeaders.set('X-Hash', config.secureModeHash);
+			responseHeaders.set('X-Secure-Mode-Hash', config.secureModeHash);
 		}
 
 		accessControlHeaders(responseHeaders, request.headers.get('Origin'));
@@ -88,7 +88,7 @@ function accessControlHeaders(responseHeaders: Headers = new Headers(), origin: 
 	responseHeaders.set('Access-Control-Allow-Origin', origin ?? '*');
 	responseHeaders.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
 	responseHeaders.set('Access-Control-Allow-Headers', 'Authorization, Cookie');
-	responseHeaders.set('Access-Control-Expose-Headers', 'X-Hash');
+	responseHeaders.set('Access-Control-Expose-Headers', 'X-Secure-Mode-Hash');
 	responseHeaders.set('Access-Control-Allow-Credentials', 'true');
 	return responseHeaders;
 }
